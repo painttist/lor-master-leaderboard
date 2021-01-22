@@ -1,0 +1,15 @@
+p {
+    color: white;
+}
+
+:root {
+    --col-gold: rgb(224, 171, 24);
+    --col-dark-gold: rgb(124, 94, 11);
+    --col-light-grey: rgb(94, 94, 94);
+    --col-dark-grey: rgb(65, 65, 65);
+    --col-background: rgb(28, 28, 31);
+}
+
+body {
+    background-color: var(--col-background);
+}

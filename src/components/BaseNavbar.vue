@@ -1,0 +1,68 @@
+<template>
+    <div id="menu" class="">
+        <router-link to="/" class="menu-item">
+            <span><i class="fa fa-trophy"></i></span>
+        </router-link>
+        <router-link to="/about" class="menu-item">
+            <span><i class="fa fa-user"></i></span>
+        </router-link>
+    </div>
+</template>
+
+<script>
+
+
+export default {
+  // props: ["name"],
+  // components: {
+  //   MainLayout
+  // }
+}
+</script>
+
+<style scoped>
+
+    #menu {
+        display: flex;
+
+        position: fixed; 
+        top: 0px;
+        left: 0px;
+
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        height: 100vh;
+
+        margin-left: 0px;
+    }
+
+    .menu-item {
+        display: flex;
+        /* border: 1px var(--col-gold)enrod solid; */
+        color: var(--col-gold);
+        /* background-color:white; */
+
+        width: 80px;
+        height: 60px;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 1.4em;
+
+        /* border-radius: 0px 10px 0px 0px; */
+
+        margin: 10px 0px 10px 0px;
+        border-right: 2px solid transparent;
+    }
+
+    .menu-item:hover {
+        border-right: 2px solid var(--col-gold);
+    }
+
+    .router-link-exact-active.menu-item {
+        color: white;
+        border-right: 2px solid var(--col-gold);
+    }
+</style>

@@ -12,10 +12,10 @@ const routes = [
     component: Home,
   },
   {
-    path: "/about/:name",
+    path: "/about",
     name: "About",
     component: About,
-    props: true,
+    // props: true,
   },
   { path: '/:pathMatch(.*)*', 
     name: 'not-found', 
