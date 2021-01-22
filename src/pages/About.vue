@@ -1,15 +1,19 @@
 <template>
-  <main-layout>
     <p>About page.</p>
-  </main-layout>
+    <p v-if="hasName">{{name}}</p>
 </template>
 
 <script>
-import MainLayout from '../layouts/Main.vue'
 
 export default {
-  components: {
-    MainLayout
+  props: ["name"],
+  computed: {
+    hasName() {
+      return (this.name.length > 0)
+    }
   }
+  // components: {
+  //   MainLayout
+  // }
 }
 </script>
