@@ -7,29 +7,20 @@
             <div class="history-info">{{rounds}} Rounds</div>
         </div>
         <div class="row decklist">
-            <div class="row deck btn" @click="showOpponentDeck">
-                <div class="region-icon icon">SI</div>
-                <div class="region-icon icon">DE</div>
-                <div class="champion-icon icon">EL</div>
-                <div class="champion-icon icon">TF</div>
-            </div>
+            <deck-preview @click="showOpponentDeck" :deck="opponentDeck"></deck-preview>
             <div>VS</div>
-            <div class="row deck btn" @click="showDeck">
-                <div class="region-icon icon">SI</div>
-                <div class="region-icon icon">DE</div>
-                <div class="champion-icon icon">EL</div>
-                <div class="champion-icon icon">TF</div>
-            </div>
+            <deck-preview @click="showDeck" :deck="deck"></deck-preview>
         </div>
     </div>
 
-    <deck-detail v-if="visibleDeck == 1">{{deck}}</deck-detail>
-    <deck-detail v-if="visibleDeck == 2">{{opponentDeck}}</deck-detail>
+    <deck-detail v-if="visibleDeck == 1" :deck="deck"></deck-detail>
+    <deck-detail v-if="visibleDeck == 2" :deck="opponentDeck"></deck-detail>
 
 </template>
 
 <script>
 import DeckDetail from '../components/MatchInfoDeckDetail.vue'
+import DeckPreview from '../components/MatchInfoDeckPreview.vue'
 
 export default {
     data() {
@@ -65,6 +56,7 @@ export default {
     },
     components: {
         DeckDetail,
+        DeckPreview,
     }
 }
 </script>
@@ -85,6 +77,13 @@ export default {
         color: white;
     }
 
+    .opponent-name {
+        /* display: block; */
+        padding: 10px;
+        border-radius: 6px;
+        text-decoration: none;
+    }
+
     .match.won {
         /* background: linear-gradient(-60deg,rgb(224, 171, 24), rgb(78, 78, 78) 60%); */
         /* box-shadow: inset 0px 0px 0px 2px var(--col-gold); */
@@ -100,6 +99,12 @@ export default {
     
     }
 
+    .history-info {
+        font-size: 0.8em;
+        color: rgba(255, 255, 255, 0.5);
+        padding: 10px;
+    }
+    
     .row {
         display: flex;
         align-items: baseline;
@@ -109,42 +114,9 @@ export default {
         justify-content: space-between;
     }
 
-    .row.deck {
-        width: 200px;
-        padding: 10px;
-        justify-content: space-between;
-        border-radius: 6px;
-    }
-
-    .row.opponent {
-        /* margin-bottom: 10px; */
-        /* padding-left: 330px; */
-    }
-
-    .opponent-name {
-        /* display: block; */
-        padding: 10px;
-        border-radius: 6px;
-        text-decoration: none;
-    }
-
-    .history-info {
-        font-size: 0.8em;
-        color: rgba(255, 255, 255, 0.5);
-        padding: 10px;
-    }
-
-    .icon {
-        padding: 10px;
-        width: 20px;
-        height: 20px;
-        color: black;
-        background-color: white;
-        border-radius: 20px;
-    }
-
     .btn:hover {
-        background-color: rgba(255, 255, 255, 0.5);
+        /* background-color: rgba(255, 255, 255, 0.5); */
+        text-decoration: underline;
         cursor: pointer;
     }
 

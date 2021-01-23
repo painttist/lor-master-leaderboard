@@ -12,8 +12,8 @@
         </div>
 
         <div id="search-container">
-            <div id="search-icon" v-if="!isLoading"><i class="fa fa-search"></i></div>
-            <div id="search-icon" v-if="isLoading"><i class="fa fa-spinner"></i></div>
+            <div class="search-icon" v-if="!isLoading"><i class="fa fa-search"></i></div>
+            <div class="search-icon loading" v-if="isLoading"><i class="fa fa-circle-notch fa-spin"></i></div>
             <input v-model="searchText"
                 id="search-input" type="text" :placeholder="isLoading ? 'Loading...' : searchPlaceHolder " :disabled="isLoading">
         </div>
@@ -220,7 +220,7 @@ export default {
         /* box-shadow: 0px 0px 10px 2px var(--col-gold); */
     }
 
-    #search-icon {
+    .search-icon {
         position: absolute;
         top: 14px;
         left: 20px;

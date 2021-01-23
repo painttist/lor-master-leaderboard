@@ -1,14 +1,16 @@
 <template>
     <div class="deck-detail">
         <div class="deck-code">
-            <slot></slot>
+            {{deck}}
         </div>
     </div>
 </template>
 
 <script>
 export default {
-
+    props: {
+        deck: String,
+    },
 }
 </script>
 
