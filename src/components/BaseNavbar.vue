@@ -1,11 +1,14 @@
 <template>
     <div id="menu" class="">
         <router-link to="/" class="menu-item">
+            <span><i class="fa fa-home"></i></span>
+        </router-link>
+        <router-link to="/leaderboard" class="menu-item">
             <span><i class="fa fa-trophy"></i></span>
         </router-link>
-        <router-link to="/about" class="menu-item">
+        <!-- <router-link to="/profile" class="menu-item">
             <span><i class="fa fa-user"></i></span>
-        </router-link>
+        </router-link> -->
     </div>
 </template>
 
@@ -61,8 +64,10 @@ export default {
         border-right: 2px solid var(--col-gold);
     }
 
-    .router-link-exact-active.menu-item {
+    .router-link-active.menu-item {
         color: white;
         border-right: 2px solid var(--col-gold);
     }
+
+    
 </style>

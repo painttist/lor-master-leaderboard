@@ -7,7 +7,7 @@
 import BaseNavbar from '../components/BaseNavbar.vue'
 
 export default {
-    components: {
+  components: {
     BaseNavbar
   },
 }

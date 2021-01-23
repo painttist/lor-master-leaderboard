@@ -17,8 +17,5 @@ export default {
   //     return (this.name.length > 0)
   //   }
   // }
-  // components: {
-  //   MainLayout
-  // }
 }
 </script>
