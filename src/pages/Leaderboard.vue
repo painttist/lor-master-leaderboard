@@ -14,7 +14,8 @@
         <div id="search-container">
             <div id="search-icon" v-if="!isLoading"><i class="fa fa-search"></i></div>
             <div id="search-icon" v-if="isLoading"><i class="fa fa-spinner"></i></div>
-            <input id="search-input" type="text" :placeholder="isLoading ? 'Loading...' : 'Search' " :disabled="isLoading">
+            <input v-model="searchText"
+                id="search-input" type="text" :placeholder="isLoading ? 'Loading...' : 'Search' " :disabled="isLoading">
         </div>
 
         <div id="ladder">
@@ -23,7 +24,7 @@
                 <div class="info-name">Name</div>
                 <div class="info-lp">Points</div>
             </div>
-            <leaderboard-player v-for="(player, index) in players" :key="index" :rank="player.rank + 1" :name="player.name" :lp="player.lp"></leaderboard-player>
+            <leaderboard-player v-for="(player, index) in filteredPlayers" :key="index" :rank="player.rank + 1" :name="player.name" :lp="player.lp"></leaderboard-player>
         </div>
 
     </div>
@@ -53,6 +54,8 @@ const test_api_links = [
     APILink, APILink2, APILink, APILink2
 ]
 
+const cors = "https://cors-anywhere.herokuapp.com/"
+
 export default {
     mounted() {
         // this.activeRegionNavElement = document.getElementById('btn-na')
@@ -79,9 +82,20 @@ export default {
             regions: regions,
             request: null,
             isLoading: false,
+            searchText: ""
         }
     },
     computed: {
+        filteredPlayers() {
+            if (this.searchText) {
+                // console.log("filtered")
+                var searchText = this.searchText
+                return this.players.filter(function(player) {
+                    return player.name.toLowerCase().indexOf(searchText.toLowerCase()) !== -1
+                })
+            }
+            return this.players;
+        }
     },
     components: { BaseNavbar, LeaderboardPlayer },
     methods: {
@@ -92,7 +106,12 @@ export default {
             const axiosSource = axios.CancelToken.source()
             this.request = { cancel: axiosSource.cancel, msg: "Loading..." };
 
-            var APILink = test_api_links[regionID]
+            var APILink = null;
+            if (process.env.NODE_ENV === "production") {
+                APILink = cors + "https://" + api_regions[regionID] + ".api.riotgames.com/lor/ranked/v1/leaderboards?api_key=" + api_key;
+            } else {
+                APILink = test_api_links[regionID]
+            }
 
             this.isLoading = true;
 
@@ -123,11 +142,8 @@ export default {
                 // this.activeRegionNavElement.classList.remove("active")
                 // event.target.classList.add("active")
                 // this.activeRegionNavElement = event.target
-
-                // var APILink = "https://" + api_regions[regionsID] + ".api.riotgames.com/lor/ranked/v1/leaderboards?api_key=" + api_key;
                 
                 this.getLeaderboard(regionID)
-
                 this.activeRegion = regionID
             }
 
