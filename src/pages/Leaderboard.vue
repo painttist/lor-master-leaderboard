@@ -15,7 +15,7 @@
             <div id="search-icon" v-if="!isLoading"><i class="fa fa-search"></i></div>
             <div id="search-icon" v-if="isLoading"><i class="fa fa-spinner"></i></div>
             <input v-model="searchText"
-                id="search-input" type="text" :placeholder="isLoading ? 'Loading...' : 'Search' " :disabled="isLoading">
+                id="search-input" type="text" :placeholder="isLoading ? 'Loading...' : searchPlaceHolder " :disabled="isLoading">
         </div>
 
         <div id="ladder">
@@ -95,6 +95,13 @@ export default {
                 })
             }
             return this.players;
+        },
+        searchPlaceHolder() {
+            if (this.players) {
+                return "Search "+ this.players.length +" players"
+            } else {
+                return "Search"
+            }
         }
     },
     components: { BaseNavbar, LeaderboardPlayer },
