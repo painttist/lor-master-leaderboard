@@ -73,17 +73,6 @@ export default {
         margin-top: 10px;
     }
 
-    .match .opponent-name {
-        color: white;
-    }
-
-    .opponent-name {
-        /* display: block; */
-        padding: 10px;
-        border-radius: 6px;
-        text-decoration: none;
-    }
-
     .match.won {
         /* background: linear-gradient(-60deg,rgb(224, 171, 24), rgb(78, 78, 78) 60%); */
         /* box-shadow: inset 0px 0px 0px 2px var(--col-gold); */
@@ -114,9 +103,26 @@ export default {
         justify-content: space-between;
     }
 
+    .opponent-name {
+        /* display: block; */
+        padding: 10px 5px 5px 5px;
+        margin-left: 8px;
+        /* padding-bottom: 5px; */
+        /* border-radius: 6px; */
+        text-decoration: none;
+
+        border-bottom: 2px solid transparent;
+        border-radius: 0px;
+    }
+
+    .opponent-name:hover {
+        border-bottom: 2px solid white;
+    }
+
     .btn:hover {
         /* background-color: rgba(255, 255, 255, 0.5); */
-        text-decoration: underline;
+        /* text-decoration: underline; */
+        /* border-bottom: 1px solid white; */
         cursor: pointer;
     }
 

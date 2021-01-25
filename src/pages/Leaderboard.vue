@@ -36,6 +36,10 @@ import BaseNavbar from '../components/BaseNavbar.vue'
 import axios from 'axios'
 import LeaderboardPlayer from '../components/LeaderboardPlayer.vue'
 
+import firebase from 'firebase/app'
+import "firebase/auth";
+import "firebase/database";
+
 const regions = {
     NA: 0, EU: 1, AS: 2, SEA: 3
 }
@@ -82,7 +86,8 @@ export default {
             regions: regions,
             request: null,
             isLoading: false,
-            searchText: ""
+            searchText: "",
+            signedIn: false
         }
     },
     computed: {
@@ -106,34 +111,109 @@ export default {
     },
     components: { BaseNavbar, LeaderboardPlayer },
     methods: {
-        getLeaderboard(regionID) {
+        signIn() {
             
-            if (this.request) this.cancelLeaderboard()
+            if (firebase.apps.length === 0) {
 
-            const axiosSource = axios.CancelToken.source()
-            this.request = { cancel: axiosSource.cancel, msg: "Loading..." };
-
-            var APILink = null;
-            if (process.env.NODE_ENV === "production") {
-                APILink = cors + "https://" + api_regions[regionID] + ".api.riotgames.com/lor/ranked/v1/leaderboards?api_key=" + api_key;
-            } else {
-                APILink = test_api_links[regionID]
+                var firebaseConfig = {
+                apiKey: "AIzaSyCxGjwqMuzBJXPWz1ixhpFLpH0Gn-SMIl0",
+                authDomain: "lor-master-leaderboard.firebaseapp.com",
+                databaseURL: "https://lor-master-leaderboard-default-rtdb.firebaseio.com",
+                projectId: "lor-master-leaderboard",
+                storageBucket: "lor-master-leaderboard.appspot.com",
+                messagingSenderId: "659164123299",
+                appId: "1:659164123299:web:88206dcb77fc2d81642f16",
+                measurementId: "G-Q7ZNPR6Y79"
+                };
+                // Initialize Firebase
+                firebase.initializeApp(firebaseConfig);
+                // firebase.analytics();
             }
+
+            if (!firebase.auth().currentUser) {
+
+                firebase.auth().signInAnonymously()
+                    .then(() => {
+                        // Signed in..
+                        
+                        // console.log("Signed In")
+                        // console.log(this.signedIn)
+                    })
+                    .catch((error) => {
+                        var errorCode = error.code;
+                        var errorMessage = error.message;
+                        console.log(errorCode + " | " + errorMessage)
+                    });
+                
+                firebase.auth().onAuthStateChanged((user) => {
+                    if (user) {
+                    // User is signed in, see docs for a list of available properties
+                    // https://firebase.google.com/docs/reference/js/firebase.User
+                        // var uid = user.uid;
+                        // console.log("Sign in Success")
+                        this.signedIn = true
+                        this.getLeaderboard(this.activeRegion)
+                    } else {
+                    // User is signed out
+                    // ...
+                    }
+                });
+            }
+        },
+        getLeaderboard(regionID) {
 
             this.isLoading = true;
 
-            axios.get(APILink, {cancelToken: axiosSource.token} )
-            .then((data) => {
-                this.players = data.data.players
-                // console.log('players', this.players)
-                this.isLoading = false;
-            })
-            .catch((e) => {
-                if (axios.isCancel(e)) {
-                    console.log("Request cancelled");
-                } else 
-                { console.log('error', e) }
-            })
+            if (!this.signedIn) {
+                this.signIn()
+                // console.log("Sighed In: " +  this.signedIn)
+            } else {
+                // console.log("Logged in and start reading data")
+                var database = firebase.database();
+                var ref = database.ref('leaderboard/' + api_regions[regionID])
+
+                ref.once('value').then((snapshot) => {
+                    
+                    if (!snapshot.val()) {
+                        console.log("Data Empty")
+                        // this.getLeaderboard(this.activeRegion);
+                    } else {
+                        // console.log("Data Success")
+                        // var data = snapshot.val();
+                        this.isLoading = false;
+                        this.players = snapshot.val().players;
+                    }
+                    // console.log(data)
+                }, (err) => {
+                    console.log(err)
+                })
+            }
+            
+            // if (this.request) this.cancelLeaderboard()
+
+            // const axiosSource = axios.CancelToken.source()
+            // this.request = { cancel: axiosSource.cancel, msg: "Loading..." };
+
+            // var APILink = null;
+            // if (process.env.NODE_ENV === "production") {
+            //     APILink = test_api_links[regionID]
+            //     // APILink = cors + "https://" + api_regions[regionID] + ".api.riotgames.com/lor/ranked/v1/leaderboards?api_key=" + api_key;
+            // } else {
+            //     APILink = test_api_links[regionID]
+            // }
+
+            // axios.get(APILink, {cancelToken: axiosSource.token} )
+            // .then((data) => {
+            //     this.players = data.data.players
+            //     // console.log('players', this.players)
+            //     this.isLoading = false;
+            // })
+            // .catch((e) => {
+            //     if (axios.isCancel(e)) {
+            //         console.log("Request cancelled");
+            //     } else 
+            //     { console.log('error', e) }
+            // })
         },
 
         cancelLeaderboard() {
