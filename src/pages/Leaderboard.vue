@@ -198,17 +198,19 @@ export default {
                 // console.log("Sighed In: " +  this.signedIn)
             } else {
                 console.log("Signed-In: TRUE")
-                if (!this.rawPlayers) {
+                this.dataStartTime = (new Date()).getTime();
+
+                var selfImplementCache = false;
+
+                if (!this.rawPlayers || !selfImplementCache) {
                     // this.players[this.activeRegion]
                     // console.log()
-
-                    this.dataStartTime = (new Date()).getTime();
                 
                     var database = firebase.database();
                     var ref = database.ref('leaderboard/' + api_regions[regionID] + '/players/')
                     // .limitToFirst(200)
 
-                    ref.once('value').then((snapshot) => {
+                    ref.on('value', (snapshot) => {
                     
                         if (!snapshot.val()) {
                             // console.log("Data Empty")
@@ -216,6 +218,7 @@ export default {
                         } else {
                             // console.log("Data Success")
                             // var data = snapshot.val();
+                            console.log("Data newly loaded")
                             var readTime = (new Date()).getTime() - this.dataStartTime;
                             console.log("Read time: " + readTime / 1000 + ' s');
                             const size = new TextEncoder().encode(JSON.stringify(snapshot.val())).length
@@ -229,7 +232,7 @@ export default {
                             this.players[this.activeRegion] = snapshot.val();
 
                             this.storePlayers(this.activeRegion, snapshot.val());
-                            console.log(this.rawPlayers)
+                            // console.log(this.rawPlayers)
                             // var players = this.players[0];
                             // console.log(players);
                             // console.log(this.players[this.activeRegion][0])
@@ -242,7 +245,9 @@ export default {
 
                 } else {
                     this.isLoading = false;
-                    console.log("Data Already Loaded " + this.activeRegion)
+                    console.log("Data already loaded " + this.activeRegion)
+                    var readTime = (new Date()).getTime() - this.dataStartTime;
+                    console.log("Read time: " + readTime / 1000 + ' s');
                 }
                 // console.log("Logged in and start reading data")
                 

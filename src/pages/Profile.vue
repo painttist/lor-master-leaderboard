@@ -92,29 +92,29 @@ export default {
 
 }
 
-const match1Info = {
-    opponentName: "Bike",
-    round: 25,
-    deck: "CICACAQAAEBACAA2FUBQGAAFBIFQGAYJENKVMAQBAEAASBIDBEBCMSC4MQAQCAIACU", 
-    oppdeck: "CIBQEAIABENAEAYAAUFASAYJBERTSVCVKZLWAZAAAEAQCAAH",
-    won: true
-}
+// const match1Info = {
+//     opponentName: "Bike",
+//     round: 25,
+//     deck: "CICACAQAAEBACAA2FUBQGAAFBIFQGAYJENKVMAQBAEAASBIDBEBCMSC4MQAQCAIACU", 
+//     oppdeck: "CIBQEAIABENAEAYAAUFASAYJBERTSVCVKZLWAZAAAEAQCAAH",
+//     won: true
+// }
 
-const match2Info = {
-    opponentName: "Ace",
-    round: 25,
-    deck: "CICACAQAAEBACAA2FUBQGAAFBIFQGAYJENKVMAQBAEAASBIDBEBCMSC4MQAQCAIACU", 
-    oppdeck: "CIBQEAIABENAEAYAAUFASAYJBERTSVCVKZLWAZAAAEAQCAAH",
-    won: false
-}
+// const match2Info = {
+//     opponentName: "Ace",
+//     round: 25,
+//     deck: "CICACAQAAEBACAA2FUBQGAAFBIFQGAYJENKVMAQBAEAASBIDBEBCMSC4MQAQCAIACU", 
+//     oppdeck: "CIBQEAIABENAEAYAAUFASAYJBERTSVCVKZLWAZAAAEAQCAAH",
+//     won: false
+// }
 
-const match3Info = {
-    opponentName: "Cat",
-    round: 15,
-    deck: "CICACAQAAEBACAA2FUBQGAAFBIFQGAYJENKVMAQBAEAASBIDBEBCMSC4MQAQCAIACU", 
-    oppdeck: "CIBQEAIABENAEAYAAUFASAYJBERTSVCVKZLWAZAAAEAQCAAH",
-    won: false
-}
+// const match3Info = {
+//     opponentName: "Cat",
+//     round: 15,
+//     deck: "CICACAQAAEBACAA2FUBQGAAFBIFQGAYJENKVMAQBAEAASBIDBEBCMSC4MQAQCAIACU", 
+//     oppdeck: "CIBQEAIABENAEAYAAUFASAYJBERTSVCVKZLWAZAAAEAQCAAH",
+//     won: false
+// }
 
 </script>
 
