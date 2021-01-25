@@ -18,7 +18,10 @@ const { DeckEncoder } = require('runeterra')
 import championCards from '../assets/data/champion.js'
 
 export default {
-    data() {}, 
+    data() {
+        return {
+        }
+    }, 
     mounted() {
         var deck = DeckEncoder.decode(this.deck);
         // console.log(deck)

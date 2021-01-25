@@ -39,6 +39,7 @@ import LeaderboardPlayer from '../components/LeaderboardPlayer.vue'
 import firebase from 'firebase/app'
 import "firebase/auth";
 import "firebase/database";
+// import "firebase/performance";
 
 const regions = {
     NA: 0, EU: 1, AS: 2, SEA: 3
@@ -57,13 +58,16 @@ const test_api_links = [
 
 const cors = "https://cors-anywhere.herokuapp.com/"
 
+const useRTDB = true;
+const cloud_function_api_url = "https://us-central1-lor-master-leaderboard.cloudfunctions.net/updateLeaderboardEndPoint?region="
+
 export default {
     mounted() {
         // this.activeRegionNavElement = document.getElementById('btn-na')
         // console.log(document.getElementById('btn-na'))
         // this.activeRegionNavElement = document.getElementById('btn-na')
 
-        this.activeRegion = 0
+        // this.activeRegion = 0
 
         this.getLeaderboard(this.activeRegion)
 
@@ -127,60 +131,73 @@ export default {
     methods: {
         signIn() {
 
-            console.log("Start of signin()")
-            
-            if (firebase.apps.length === 0) {
+            // const alwaysInitFirebaseApp = false;
 
-                console.log("Init Firebase App")
+            // if (firebase.apps.length === 0) {
 
-                var firebaseConfig = {
-                apiKey: "AIzaSyCxGjwqMuzBJXPWz1ixhpFLpH0Gn-SMIl0",
-                authDomain: "lor-master-leaderboard.firebaseapp.com",
-                databaseURL: "https://lor-master-leaderboard-default-rtdb.firebaseio.com",
-                projectId: "lor-master-leaderboard",
-                storageBucket: "lor-master-leaderboard.appspot.com",
-                messagingSenderId: "659164123299",
-                appId: "1:659164123299:web:88206dcb77fc2d81642f16",
-                measurementId: "G-Q7ZNPR6Y79"
-                };
+                // console.log("Init Firebase App")
+
+                // var firebaseConfig = {
+                // apiKey: "AIzaSyCxGjwqMuzBJXPWz1ixhpFLpH0Gn-SMIl0",
+                // authDomain: "lor-master-leaderboard.firebaseapp.com",
+                // databaseURL: "https://lor-master-leaderboard-default-rtdb.firebaseio.com",
+                // projectId: "lor-master-leaderboard",
+                // storageBucket: "lor-master-leaderboard.appspot.com",
+                // messagingSenderId: "659164123299",
+                // appId: "1:659164123299:web:88206dcb77fc2d81642f16",
+                // measurementId: "G-Q7ZNPR6Y79"
+                // };
                 // Initialize Firebase
-                firebase.initializeApp(firebaseConfig);
+                // firebase.initializeApp(firebaseConfig);
+                // const perf = firebase.performance();
+                // console.log(perf)
                 // firebase.analytics();
-            }
+            // }
+            
+            if (useRTDB) {
 
-            if (!firebase.auth().currentUser) {
-
-                console.log("User undefined, prepare signin")
-
-                firebase.auth().signInAnonymously()
-                    .then(() => {
-                        // Signed in..
-                        
-                        // console.log("Signed In")
-                        // console.log(this.signedIn)
-                    })
-                    .catch((error) => {
-                        var errorCode = error.code;
-                        var errorMessage = error.message;
-                        console.log(errorCode + " | " + errorMessage)
-                    });
+                // Use Realtime Database
                 
-                firebase.auth().onAuthStateChanged((user) => {
-                    if (user) {
-                    // User is signed in, see docs for a list of available properties
-                    // https://firebase.google.com/docs/reference/js/firebase.User
-                        // var uid = user.uid;
-                        console.log("Sign in Success")
-                        this.signedIn = true
-                        this.getLeaderboard(this.activeRegion)
-                    } else {
-                    // User is signed out
-                    // ...
-                    }
-                });
+
+                if (!firebase.auth().currentUser) {
+
+                    console.log("User undefined, prepare signin")
+
+                    firebase.auth().signInAnonymously()
+                        .then(() => {
+                            // Signed in..
+                            
+                            // console.log("Signed In")
+                            // console.log(this.signedIn)
+                        })
+                        .catch((error) => {
+                            var errorCode = error.code;
+                            var errorMessage = error.message;
+                            console.log(errorCode + " | " + errorMessage)
+                        });
+                    
+                    firebase.auth().onAuthStateChanged((user) => {
+                        if (user) {
+                        // User is signed in, see docs for a list of available properties
+                        // https://firebase.google.com/docs/reference/js/firebase.User
+                            // var uid = user.uid;
+                            console.log("Sign in Success")
+                            this.signedIn = true
+                            this.getLeaderboard(this.activeRegion)
+                        } else {
+                        // User is signed out
+                        // ...
+                        }
+                    });
+                } else {
+                    console.log("User is defined")
+                    this.signedIn = true
+                    this.getLeaderboard(this.activeRegion)
+                }
+
             } else {
-                console.log("User is defined")
-                this.signedIn = true
+                // Use Cloud Function Endpoints
+                this.signedIn = true;
                 this.getLeaderboard(this.activeRegion)
             }
         },
@@ -196,7 +213,10 @@ export default {
                 console.log("Signed-In: FALSE")
                 this.signIn()
                 // console.log("Sighed In: " +  this.signedIn)
-            } else {
+            }
+
+            if (useRTDB) {
+
                 console.log("Signed-In: TRUE")
                 this.dataStartTime = (new Date()).getTime();
 
@@ -251,34 +271,40 @@ export default {
                 }
                 // console.log("Logged in and start reading data")
                 
-                
+                   
+            } else {
+
+                if (!this.rawPlayers) {
+
+                    if (this.request) this.cancelLeaderboard()
+                    const axiosSource = axios.CancelToken.source()
+                    this.request = { cancel: axiosSource.cancel, msg: "Loading..." };
+
+                    var api_link;
+                    if (process.env.NODE_ENV === 'production') {
+                        api_link = cloud_function_api_url + api_regions[regionID]
+                    } else {
+                        api_link = cors + cloud_function_api_url + api_regions[regionID]
+                    }
+                        
+
+                    axios.get(api_link, {cancelToken: axiosSource.token} )
+                    .then((res) => {
+                        this.$store.commit("storePlayers", { id: regionID, obj: res.data.players} );
+                        // console.log('players', this.players)
+                        this.isLoading = false;
+                    })
+                    .catch((e) => {
+                        if (axios.isCancel(e)) {
+                            console.log("Request cancelled");
+                        } else 
+                        { console.log('error', e) }
+                    })
+                } else {
+                    this.isLoading = false;
+                    console.log("Data Cached")
+                }
             }
-            
-            // if (this.request) this.cancelLeaderboard()
-
-            // const axiosSource = axios.CancelToken.source()
-            // this.request = { cancel: axiosSource.cancel, msg: "Loading..." };
-
-            // var APILink = null;
-            // if (process.env.NODE_ENV === "production") {
-            //     APILink = test_api_links[regionID]
-            //     // APILink = cors + "https://" + api_regions[regionID] + ".api.riotgames.com/lor/ranked/v1/leaderboards?api_key=" + api_key;
-            // } else {
-            //     APILink = test_api_links[regionID]
-            // }
-
-            // axios.get(APILink, {cancelToken: axiosSource.token} )
-            // .then((data) => {
-            //     this.players = data.data.players
-            //     // console.log('players', this.players)
-            //     this.isLoading = false;
-            // })
-            // .catch((e) => {
-            //     if (axios.isCancel(e)) {
-            //         console.log("Request cancelled");
-            //     } else 
-            //     { console.log('error', e) }
-            // })
         },
 
         cancelLeaderboard() {

@@ -43,7 +43,7 @@ import axios from 'axios'
 
 export default {
     mounted() {
-        console.log(JSON.stringify(this.matchInfos))
+        // console.log(JSON.stringify(this.matchInfos))
         this.getMatchInfo()
     },
     data() {
@@ -79,7 +79,7 @@ export default {
             axios.get(APILink, {cancelToken: axiosSource.token} )
             .then((data) => {
                 this.matchInfos = data.data.matches;
-                console.log(data);
+                // console.log(data);
             })
             .catch((e) => {
                 if (axios.isCancel(e)) {

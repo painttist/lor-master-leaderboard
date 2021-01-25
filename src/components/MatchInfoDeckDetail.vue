@@ -10,6 +10,9 @@
 
 <script>
 export default {
+    data() {
+        return {}
+    }, 
     props: {
         deck: String,
     },
