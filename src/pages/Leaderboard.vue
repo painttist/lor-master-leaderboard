@@ -48,9 +48,6 @@ const regions = {
 
 // var activeRegionNavElement
 const api_regions = ["americas", "europe", "asia", "sea"]
-const api_key = "RGAPI-484a6415-722b-490f-8e7f-ae5cbbaf847f"
-
-
 
 const APILink2 = "https://run.mocky.io/v3/40e6eb37-e9c5-421d-897a-2a7045fce75b"
 const APILink = 'https://run.mocky.io/v3/ed875f26-bf4b-4159-bdbb-2892f5d98b3e'
@@ -81,13 +78,14 @@ export default {
     }, 
     data() {
         return {
-            players: null,
-            activeRegion: 0,
+            players: [],
+            // activeRegion: 0,
             regions: regions,
             request: null,
             isLoading: false,
             searchText: "",
-            signedIn: false
+            signedIn: false,
+            dataStartTime: 0,
         }
     },
     computed: {
@@ -95,25 +93,45 @@ export default {
             if (this.searchText) {
                 // console.log("filtered")
                 var searchText = this.searchText
-                return this.players.filter(function(player) {
-                    return player.name.toLowerCase().indexOf(searchText.toLowerCase()) !== -1
-                })
+                var filteredPlayers = []
+                var prefilteredPlayer = this.rawPlayers
+                for (var i = 0; i < prefilteredPlayer.length; i++) {
+                    // console.log(i)
+                    if (prefilteredPlayer[i].name.toLowerCase().indexOf(searchText.toLowerCase()) !== -1) {
+                        filteredPlayers.push(prefilteredPlayer[i])
+                    }
+                }
+                // return this.players[this.activeRegion].filter(function(player) {
+                //     return player.name.toLowerCase().indexOf(searchText.toLowerCase()) !== -1
+                // })
+
+                return filteredPlayers
             }
-            return this.players;
+            return this.rawPlayers;
         },
         searchPlaceHolder() {
-            if (this.players) {
-                return "Search "+ this.players.length +" players"
+            if (this.rawPlayers) {
+                return "Search "+ this.rawPlayers.length +" players"
             } else {
                 return "Search"
             }
+        },
+        rawPlayers() {
+            return this.$store.state.players[this.activeRegion]
+        },
+        activeRegion() {
+            return this.$store.state.activeRegion
         }
     },
     components: { BaseNavbar, LeaderboardPlayer },
     methods: {
         signIn() {
+
+            console.log("Start of signin()")
             
             if (firebase.apps.length === 0) {
+
+                console.log("Init Firebase App")
 
                 var firebaseConfig = {
                 apiKey: "AIzaSyCxGjwqMuzBJXPWz1ixhpFLpH0Gn-SMIl0",
@@ -131,6 +149,8 @@ export default {
             }
 
             if (!firebase.auth().currentUser) {
+
+                console.log("User undefined, prepare signin")
 
                 firebase.auth().signInAnonymously()
                     .then(() => {
@@ -150,7 +170,7 @@ export default {
                     // User is signed in, see docs for a list of available properties
                     // https://firebase.google.com/docs/reference/js/firebase.User
                         // var uid = user.uid;
-                        // console.log("Sign in Success")
+                        console.log("Sign in Success")
                         this.signedIn = true
                         this.getLeaderboard(this.activeRegion)
                     } else {
@@ -158,35 +178,75 @@ export default {
                     // ...
                     }
                 });
+            } else {
+                console.log("User is defined")
+                this.signedIn = true
+                this.getLeaderboard(this.activeRegion)
             }
+        },
+        storePlayers(regionID, newPlayers) {
+            this.$store.commit('storePlayers', 
+                {id: regionID, obj: newPlayers})
         },
         getLeaderboard(regionID) {
 
             this.isLoading = true;
 
             if (!this.signedIn) {
+                console.log("Signed-In: FALSE")
                 this.signIn()
                 // console.log("Sighed In: " +  this.signedIn)
             } else {
-                // console.log("Logged in and start reading data")
-                var database = firebase.database();
-                var ref = database.ref('leaderboard/' + api_regions[regionID])
+                console.log("Signed-In: TRUE")
+                if (!this.rawPlayers) {
+                    // this.players[this.activeRegion]
+                    // console.log()
 
-                ref.once('value').then((snapshot) => {
+                    this.dataStartTime = (new Date()).getTime();
+                
+                    var database = firebase.database();
+                    var ref = database.ref('leaderboard/' + api_regions[regionID] + '/players/')
+                    // .limitToFirst(200)
+
+                    ref.once('value').then((snapshot) => {
                     
-                    if (!snapshot.val()) {
-                        console.log("Data Empty")
-                        // this.getLeaderboard(this.activeRegion);
-                    } else {
-                        // console.log("Data Success")
-                        // var data = snapshot.val();
-                        this.isLoading = false;
-                        this.players = snapshot.val().players;
-                    }
-                    // console.log(data)
-                }, (err) => {
-                    console.log(err)
-                })
+                        if (!snapshot.val()) {
+                            // console.log("Data Empty")
+                            // this.getLeaderboard(this.activeRegion);
+                        } else {
+                            // console.log("Data Success")
+                            // var data = snapshot.val();
+                            var readTime = (new Date()).getTime() - this.dataStartTime;
+                            console.log("Read time: " + readTime / 1000 + ' s');
+                            const size = new TextEncoder().encode(JSON.stringify(snapshot.val())).length
+                            const kiloBytes = size / 1024;
+                            const megaBytes = kiloBytes / 1024;
+
+                            console.log("File size: " + megaBytes.toFixed(3) + " MB");
+                        
+                            this.isLoading = false;
+                        
+                            this.players[this.activeRegion] = snapshot.val();
+
+                            this.storePlayers(this.activeRegion, snapshot.val());
+                            console.log(this.rawPlayers)
+                            // var players = this.players[0];
+                            // console.log(players);
+                            // console.log(this.players[this.activeRegion][0])
+                        
+                        }
+                        // console.log(data)
+                    }, (err) => {
+                        console.log(err)
+                    })
+
+                } else {
+                    this.isLoading = false;
+                    console.log("Data Already Loaded " + this.activeRegion)
+                }
+                // console.log("Logged in and start reading data")
+                
+                
             }
             
             // if (this.request) this.cancelLeaderboard()
@@ -229,9 +289,11 @@ export default {
                 // this.activeRegionNavElement.classList.remove("active")
                 // event.target.classList.add("active")
                 // this.activeRegionNavElement = event.target
-                
+                // this.activeRegion = regionID
+
+                this.$store.commit("changeRegion", regionID);
                 this.getLeaderboard(regionID)
-                this.activeRegion = regionID
+                
             }
 
             // console.log(regionID)
