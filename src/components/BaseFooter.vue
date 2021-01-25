@@ -21,4 +21,11 @@ export default {
     a {
         color: white;
     }
+
+    @media only screen and (max-width: 768px) {
+      /* For mobile phones: */
+        .footer {
+            position: relative;
+        }
+    }
 </style>

@@ -69,5 +69,43 @@ export default {
         border-right: 2px solid var(--col-gold);
     }
 
+    @media only screen and (max-width: 768px) {
+      /* For mobile phones: */
+        #menu {
+
+            position: fixed;
+            top: auto;
+            bottom: 0px;
+            left: 0px;
+
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+
+            height: auto;
+            width: 100vw;
+
+            margin-left: 0px;
+
+            background-color: var(--col-background);
+        }
+
+        .menu-item {
+            border-right: none;
+            border-top: 2px solid transparent;
+            margin: 0px 10px 0px 10px;
+        }
+
+        .menu-item:hover {
+            border-right: none;
+            border-top: 2px solid var(--col-gold);
+        }
+
+        .router-link-active.menu-item {
+            border-right: none;
+            border-top: 2px solid var(--col-gold);
+        }
+    }
+
     
 </style>

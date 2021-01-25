@@ -2,6 +2,7 @@
     <div class="row deck btn">
         <div class="region-icon icon faction" v-for="(faction, index) in factions" :key="index"
         :style=" {backgroundImage: getRegionImgUrl(faction)}"></div>
+        <!-- <div class="region-icon icon faction" :style=" {backgroundImage: getRegionImgUrl(0)}"></div> -->
         <!-- <div class="region-icon icon"></div> -->
         <!-- <div class="region-icon icon">DE</div> -->
         <div class="champion-icon icon champ" v-for="(champ, index) in champions" :key="index"
@@ -35,9 +36,13 @@ export default {
         factions() {
             var deck = DeckEncoder.decode(this.deck);
             var factionIDs = []
+            const maxFactionIDs = 3;
             for (var i in deck) {
                 if (factionIDs.indexOf(deck[i].faction.id) == -1) {
                     factionIDs.push(deck[i].faction.id)
+                    if (factionIDs.length >= maxFactionIDs) {
+                        return factionIDs;
+                    }
                 }
                 // console.log(deck[i].faction.id)
             }
@@ -85,7 +90,7 @@ export default {
     }
 
     .row.deck {
-        width: 200px;
+        width: 40%;
         padding: 10px;
         justify-content: center;
         border-radius: 6px;

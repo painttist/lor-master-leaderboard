@@ -341,27 +341,27 @@ export default {
     .info-help {
         color: white;
         background-color: var(--col-light-grey);
-        width: 500px;
+        width: 100%;
         height: 30px;
-        padding: 5px 10px;
-        margin: 5px 0px;
+        padding: 5px 0px;
+        margin: 0px 0px;
         align-items: center;
         justify-content: space-around;
         border-radius: 5px;
     }
 
     .info-rank {
-        width: 50px;
+        width: 9.6%;
         text-align: center;
     }
 
     .info-name {
-        width: 280px;
+        width: 53.8%;
         text-align: left;
     }
 
     .info-lp {
-        width: 50px;
+        width: 9.6%;
         text-align: center;
     }
 
@@ -461,8 +461,20 @@ export default {
 
     /* Ladder  */
     #ladder {
+        
         margin-top: 25px;
         /* color: white; */
+        display: flex;
+        flex-direction: column;
+        width: 520px;
+        gap: 5px;
+    }
+
+    @media only screen and (max-width: 768px) {
+        #ladder {
+            /* display: flex; */
+            width: 400px;
+        }
     }
 
 </style>

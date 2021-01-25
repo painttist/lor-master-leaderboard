@@ -139,10 +139,14 @@ export default {
         width: 550px;
     }
 
-    
-
     .footer {
         height: 50px;
+    }
+
+    @media only screen and (max-width: 768px) {
+        #history {
+            width: 400px;
+        }
     }
 
 </style>

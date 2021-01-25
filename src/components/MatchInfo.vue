@@ -8,7 +8,7 @@
         </div>
         <div class="row decklist">
             <deck-preview @click="showOpponentDeck" :deck="opponentDeck"></deck-preview>
-            <div>VS</div>
+            <div class="text-vs">VS</div>
             <deck-preview @click="showDeck" :deck="deck"></deck-preview>
         </div>
     </div>
@@ -101,6 +101,7 @@ export default {
 
     .row.decklist {
         justify-content: space-between;
+        align-items: center;
     }
 
     .opponent-name {
@@ -124,6 +125,19 @@ export default {
         /* text-decoration: underline; */
         /* border-bottom: 1px solid white; */
         cursor: pointer;
+    }
+
+    @media only screen and (max-width: 768px) {
+        .row.decklist {
+            /* display: flex; */
+            flex-wrap: wrap;
+            
+        }
+
+        .text-vs {
+            /* display: block; */
+            /* flex-basis: 2; */
+        }
     }
 
 </style>

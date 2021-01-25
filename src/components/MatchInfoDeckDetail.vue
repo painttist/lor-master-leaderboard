@@ -37,4 +37,11 @@ export default {
         color: white;
         text-decoration: none;
     }
+
+    @media only screen and (max-width: 768px) {
+        .deck-detail {
+            /* display: flex; */
+            width: 360px;
+        }
+    }
 </style>

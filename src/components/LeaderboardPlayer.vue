@@ -31,10 +31,10 @@ export default {
     .info {
         color: white;
         background-color: var(--col-dark-grey);
-        width: 500px;
+        width: 100%;
         height: 40px;
-        padding: 5px 10px;
-        margin: 5px 0px;
+        padding: 5px 0px;
+        margin: 0px 0px;
         align-items: center;
         justify-content: space-around;
         border-radius: 5px;
@@ -82,5 +82,7 @@ export default {
     a {
         text-decoration: none;
     }
+
+    
 
 </style>
